@@ -36,6 +36,25 @@
         .options li {
             margin: 10px 0;
         }
+        .option-label {
+            display: block;
+            padding: 10px 15px;
+            background-color: #f4f4f4;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-size: 18px;
+            text-align: center;
+        }
+        .option-label:hover {
+            background-color: #007bff;
+            color: white;
+        }
+        .option-label.selected {
+            background-color: #007bff;
+            color: white;
+        }
         .submit-btn {
             display: block;
             width: 100%;
@@ -46,6 +65,10 @@
             border-radius: 4px;
             cursor: pointer;
         }
+        /* Hide the radio buttons */
+        input[type="radio"] {
+            display: none;
+        }
         /* Style to center the result and audio player */
         .result-container {
             text-align: center;
@@ -54,6 +77,7 @@
             background-color: #f4f4f4;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: none; /* Hidden by default */
         }
 
         #result {
@@ -71,47 +95,56 @@
 <body>
 
 <div class="quiz-container">
-    <h2>✨✨ТЕСТ НА СЧАСТЬЕ✨✨</h2>
+    <h2>✨✨СЧАСТЬЕ✨✨</h2>
     <div id="quiz">
         <div id="question1" class="question active">
-            <h3>1.Тест на счастье? (1/3)</h3>
+            <h3>1. Тест на счастье? (1/3)</h3>
             <ul class="options">
-                <li><input type="radio" name="q1" value="A"> Счастье</li>
-                <li><input type="radio" name="q1" value="B"> Счастье</li>
-                <li><input type="radio" name="q1" value="C"> Счастье</li>
-                <li><input type="radio" name="q1" value="D"> Счастье</li>
+                <li><input type="radio" id="q1a" name="q1" value="A"><label for="q1a" class="option-label">1. Счастье</label></li>
+                <li><input type="radio" id="q1b" name="q1" value="B"><label for="q1b" class="option-label">2. Счастье</label></li>
+                <li><input type="radio" id="q1c" name="q1" value="C"><label for="q1c" class="option-label">3. Счастье</label></li>
+                <li><input type="radio" id="q1d" name="q1" value="D"><label for="q1d" class="option-label">4. Счастье</label></li>
             </ul>
             <button class="submit-btn" onclick="nextQuestion(1)">ДАЛЕЕ</button>
         </div>
         <div id="question2" class="question">
             <h3>2. Тест на счастье? (2/3)</h3>
             <ul class="options">
-                <li><input type="radio" name="q2" value="A"> Счастье</li>
-                <li><input type="radio" name="q2" value="B"> Счастье</li>
-                <li><input type="radio" name="q2" value="C"> Счастье</li>
-                <li><input type="radio" name="q2" value="D"> Счастье</li>
+                <li><input type="radio" id="q2a" name="q2" value="A"><label for="q2a" class="option-label">1. Счастье</label></li>
+                <li><input type="radio" id="q2b" name="q2" value="B"><label for="q2b" class="option-label">2. Счастье</label></li>
+                <li><input type="radio" id="q2c" name="q2" value="C"><label for="q2c" class="option-label">3. Счастье</label></li>
+                <li><input type="radio" id="q2d" name="q2" value="D"><label for="q2d" class="option-label">4. Счастье</label></li>
             </ul>
             <button class="submit-btn" onclick="nextQuestion(2)">ДАЛЕЕ</button>
         </div>
         <div id="question3" class="question">
             <h3>3. Тест на счастье? (3/3)</h3>
             <ul class="options">
-                <li><input type="radio" name="q3" value="A"> Счастье</li>
-                <li><input type="radio" name="q3" value="B"> Счастье</li>
-                <li><input type="radio" name="q3" value="C"> Счастье</li>
-                <li><input type="radio" name="q3" value="D"> Счастье</li>
+                <li><input type="radio" id="q3a" name="q3" value="A"><label for="q3a" class="option-label">1. Счастье</label></li>
+                <li><input type="radio" id="q3b" name="q3" value="B"><label for="q3b" class="option-label">2. Счастье</label></li>
+                <li><input type="radio" id="q3c" name="q3" value="C"><label for="q3c" class="option-label">3. Счастье</label></li>
+                <li><input type="radio" id="q3d" name="q3" value="D"><label for="q3d" class="option-label">4. Счастье</label></li>
             </ul>
             <button class="submit-btn" onclick="calculateResult()">ГОТОВО</button>
         </div>
     </div>
 
-    <div class="result-container" id="result-container" style="display:none;">
+    <div class="result-container" id="result-container">
         <div id="result"></div>
         <div id="audioPlayerContainer" class="audio-container"></div>
     </div>
 </div>
 
 <script>
+    // Add event listeners to highlight selected label
+    document.querySelectorAll('.option-label').forEach(label => {
+        label.addEventListener('click', function() {
+            const allLabels = this.closest('.options').querySelectorAll('.option-label');
+            allLabels.forEach(lbl => lbl.classList.remove('selected')); // Remove 'selected' from all labels
+            this.classList.add('selected'); // Add 'selected' to the clicked label
+        });
+    });
+
     function nextQuestion(current) {
         // Ensure the user has selected an answer before moving on
         const selectedOption = document.querySelector(`input[name="q${current}"]:checked`);
@@ -150,13 +183,14 @@
         let audioSource;
 
         if (maxScore === score.A || maxScore === score.B || maxScore === score.C || maxScore === score.D) {
-            result = "✨✨ СЧАСТЬЕ ЕСТЬ ✨✨";
+            result = "✨✨ДА✨✨";
             audioSource = "https://alexk37.github.io/telegram-quiz/Невозможно%20желать.mp3";  // Replace with actual audio file
         }
 
-        // Display the result and audio player
+        // Display the result and audio player, hide the last question
+        document.getElementById('question3').style.display = 'none'; // Hide the third question block
         document.getElementById('result').innerText = result;
-        document.getElementById('result-container').style.display = 'block';
+        document.getElementById('result-container').style.display = 'block'; // Show the result block
 
         const audioPlayerContainer = document.getElementById('audioPlayerContainer');
         audioPlayerContainer.innerHTML = `
@@ -165,7 +199,6 @@
                 Your browser does not support the audio element.
             </audio>
         `;
-        audioPlayerContainer.style.display = 'block';
     }
 </script>
 
