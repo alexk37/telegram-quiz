@@ -46,49 +46,68 @@
             border-radius: 4px;
             cursor: pointer;
         }
-        .result {
-            display: none;
+        /* Style to center the result and audio player */
+        .result-container {
             text-align: center;
             margin-top: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #result {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .audio-container {
+            text-align: center;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 
 <div class="quiz-container">
-    <h2>Know Your Type Quiz</h2>
+    <h2>✨✨ТЕСТ НА СЧАСТЬЕ✨✨</h2>
     <div id="quiz">
         <div id="question1" class="question active">
-            <h3>1. What is your favorite color?</h3>
+            <h3>1.Тест на счастье? (1/3)</h3>
             <ul class="options">
-                <li><input type="radio" name="q1" value="A"> Blue</li>
-                <li><input type="radio" name="q1" value="B"> Green</li>
-                <li><input type="radio" name="q1" value="C"> Red</li>
-                <li><input type="radio" name="q1" value="D"> Yellow</li>
+                <li><input type="radio" name="q1" value="A"> Счастье</li>
+                <li><input type="radio" name="q1" value="B"> Счастье</li>
+                <li><input type="radio" name="q1" value="C"> Счастье</li>
+                <li><input type="radio" name="q1" value="D"> Счастье</li>
             </ul>
-            <button class="submit-btn" onclick="nextQuestion(1)">Next</button>
+            <button class="submit-btn" onclick="nextQuestion(1)">ДАЛЕЕ</button>
         </div>
         <div id="question2" class="question">
-            <h3>2. What do you prefer to do on weekends?</h3>
+            <h3>2. Тест на счастье? (2/3)</h3>
             <ul class="options">
-                <li><input type="radio" name="q2" value="A"> Read a book</li>
-                <li><input type="radio" name="q2" value="B"> Go hiking</li>
-                <li><input type="radio" name="q2" value="C"> Watch movies</li>
-                <li><input type="radio" name="q2" value="D"> Hang out with friends</li>
+                <li><input type="radio" name="q2" value="A"> Счастье</li>
+                <li><input type="radio" name="q2" value="B"> Счастье</li>
+                <li><input type="radio" name="q2" value="C"> Счастье</li>
+                <li><input type="radio" name="q2" value="D"> Счастье</li>
             </ul>
-            <button class="submit-btn" onclick="nextQuestion(2)">Next</button>
+            <button class="submit-btn" onclick="nextQuestion(2)">ДАЛЕЕ</button>
         </div>
         <div id="question3" class="question">
-            <h3>3. What is your dream vacation?</h3>
+            <h3>3. Тест на счастье? (3/3)</h3>
             <ul class="options">
-                <li><input type="radio" name="q3" value="A"> Beach</li>
-                <li><input type="radio" name="q3" value="B"> Mountains</li>
-                <li><input type="radio" name="q3" value="C"> City exploration</li>
-                <li><input type="radio" name="q3" value="D"> Cultural experience</li>
+                <li><input type="radio" name="q3" value="A"> Счастье</li>
+                <li><input type="radio" name="q3" value="B"> Счастье</li>
+                <li><input type="radio" name="q3" value="C"> Счастье</li>
+                <li><input type="radio" name="q3" value="D"> Счастье</li>
             </ul>
-            <button class="submit-btn" onclick="calculateResult()">Submit</button>
+            <button class="submit-btn" onclick="calculateResult()">ГОТОВО</button>
         </div>
-        <div id="result" class="result"></div>
+    </div>
+
+    <div class="result-container" id="result-container" style="display:none;">
+        <div id="result"></div>
+        <div id="audioPlayerContainer" class="audio-container"></div>
     </div>
 </div>
 
@@ -128,19 +147,25 @@
         // Determine result
         let maxScore = Math.max(score.A, score.B, score.C, score.D);
         let result;
-        if (maxScore === score.A) {
-            result = "You are Type A!";
-        } else if (maxScore === score.B) {
-            result = "You are Type B!";
-        } else if (maxScore === score.C) {
-            result = "You are Type C!";
-        } else if (maxScore === score.D) {
-            result = "You are Type D!";
+        let audioSource;
+
+        if (maxScore === score.A || maxScore === score.B || maxScore === score.C || maxScore === score.D) {
+            result = "✨✨ СЧАСТЬЕ ЕСТЬ ✨✨";
+            audioSource = "https://alexk37.github.io/telegram-quiz/Невозможно%20желать.mp3";  // Replace with actual audio file
         }
 
-        // Display the result
+        // Display the result and audio player
         document.getElementById('result').innerText = result;
-        document.getElementById('result').style.display = 'block';
+        document.getElementById('result-container').style.display = 'block';
+
+        const audioPlayerContainer = document.getElementById('audioPlayerContainer');
+        audioPlayerContainer.innerHTML = `
+            <audio controls>
+                <source src="${audioSource}" type="audio/mp3">
+                Your browser does not support the audio element.
+            </audio>
+        `;
+        audioPlayerContainer.style.display = 'block';
     }
 </script>
 
