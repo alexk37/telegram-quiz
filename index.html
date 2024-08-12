@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Know Your Type Quiz</title>
+    <title>СЧАСТЬЕ</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -40,7 +40,7 @@
             display: block;
             padding: 10px 15px;
             background-color: #f4f4f4;
-            border: 2px solid #007bff;
+            border: 2px solid #e3a6ff;
             border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.3s ease, color 0.3s ease;
@@ -48,22 +48,12 @@
             text-align: center;
         }
         .option-label:hover {
-            background-color: #007bff;
+            background-color: #e3a6ff;
             color: white;
         }
         .option-label.selected {
-            background-color: #007bff;
+            background-color: #e3a6ff;
             color: white;
-        }
-        .submit-btn {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
         }
         /* Hide the radio buttons */
         input[type="radio"] {
@@ -90,6 +80,20 @@
             text-align: center;
             margin-top: 10px;
         }
+        .telegram-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #0378bb;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .telegram-button:hover {
+            background-color: #007bb5;
+        }
     </style>
 </head>
 <body>
@@ -105,7 +109,6 @@
                 <li><input type="radio" id="q1c" name="q1" value="C"><label for="q1c" class="option-label">3. Счастье</label></li>
                 <li><input type="radio" id="q1d" name="q1" value="D"><label for="q1d" class="option-label">4. Счастье</label></li>
             </ul>
-            <button class="submit-btn" onclick="nextQuestion(1)">ДАЛЕЕ</button>
         </div>
         <div id="question2" class="question">
             <h3>2. Тест на счастье? (2/3)</h3>
@@ -115,7 +118,6 @@
                 <li><input type="radio" id="q2c" name="q2" value="C"><label for="q2c" class="option-label">3. Счастье</label></li>
                 <li><input type="radio" id="q2d" name="q2" value="D"><label for="q2d" class="option-label">4. Счастье</label></li>
             </ul>
-            <button class="submit-btn" onclick="nextQuestion(2)">ДАЛЕЕ</button>
         </div>
         <div id="question3" class="question">
             <h3>3. Тест на счастье? (3/3)</h3>
@@ -125,81 +127,90 @@
                 <li><input type="radio" id="q3c" name="q3" value="C"><label for="q3c" class="option-label">3. Счастье</label></li>
                 <li><input type="radio" id="q3d" name="q3" value="D"><label for="q3d" class="option-label">4. Счастье</label></li>
             </ul>
-            <button class="submit-btn" onclick="calculateResult()">ГОТОВО</button>
         </div>
     </div>
 
     <div class="result-container" id="result-container">
         <div id="result"></div>
         <div id="audioPlayerContainer" class="audio-container"></div>
+        <a href="https://t.me/sitartur" class="telegram-button" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" class="telegram-icon">
+            СЧАСТЬЕ</a> <!-- Replace with your bot link -->
+
     </div>
 </div>
 
 <script>
-    // Add event listeners to highlight selected label
-    document.querySelectorAll('.option-label').forEach(label => {
-        label.addEventListener('click', function() {
-            const allLabels = this.closest('.options').querySelectorAll('.option-label');
-            allLabels.forEach(lbl => lbl.classList.remove('selected')); // Remove 'selected' from all labels
-            this.classList.add('selected'); // Add 'selected' to the clicked label
-        });
+// Add event listeners to highlight selected label and proceed to the next question
+document.querySelectorAll('.option-label').forEach(label => {
+    label.addEventListener('click', function() {
+        const allLabels = this.closest('.options').querySelectorAll('.option-label');
+        allLabels.forEach(lbl => lbl.classList.remove('selected')); // Remove 'selected' from all labels
+        this.classList.add('selected'); // Add 'selected' to the clicked label
+
+        const currentQuestion = this.closest('.question');
+        const questionNumber = parseInt(currentQuestion.id.replace('question', ''), 10);
+
+        if (questionNumber < 3) {
+            // If not the last question, move to the next question
+            nextQuestion(questionNumber);
+        } else {
+            // If the last question, calculate the result
+            setTimeout(calculateResult, 300); // Adding a small delay to ensure the selection is registered
+        }
+    });
+});
+
+function nextQuestion(current) {
+    // Hide current question and show the next one
+    document.getElementById(`question${current}`).classList.remove('active');
+    document.getElementById(`question${current + 1}`).classList.add('active');
+}
+
+function calculateResult() {
+    let score = {
+        A: 0,
+        B: 0,
+        C: 0,
+        D: 0
+    };
+
+    // Count the answers
+    const answers = document.querySelectorAll('input[type="radio"]:checked');
+
+    // If not all questions are answered, show an alert and stop
+    if (answers.length < 3) {
+        alert("Please answer all questions!");
+        return;
+    }
+
+    answers.forEach(answer => {
+        score[answer.value]++;
     });
 
-    function nextQuestion(current) {
-        // Ensure the user has selected an answer before moving on
-        const selectedOption = document.querySelector(`input[name="q${current}"]:checked`);
-        if (!selectedOption) {
-            alert("Please select an answer before proceeding.");
-            return;
-        }
+    // Determine result
+    let maxScore = Math.max(score.A, score.B, score.C, score.D);
+    let result;
+    let audioSource;
 
-        // Hide current question and show the next one
-        document.getElementById(`question${current}`).classList.remove('active');
-        document.getElementById(`question${current + 1}`).classList.add('active');
+    if (maxScore === score.A || maxScore === score.B || maxScore === score.C || maxScore === score.D) {
+        result = "✨✨ДА!✨✨";
+        audioSource = "https://alexk37.github.io/telegram-quiz/Невозможно%20желать.mp3";  // Replace with actual audio file
     }
 
-    function calculateResult() {
-        let score = {
-            A: 0,
-            B: 0,
-            C: 0,
-            D: 0
-        };
+    // Display the result and audio player, hide the last question
+    document.getElementById('question3').style.display = 'none'; // Hide the third question block
+    document.getElementById('result').innerText = result;
+    document.getElementById('result-container').style.display = 'block'; // Show the result block
 
-        // Count the answers
-        const answers = document.querySelectorAll('input[type="radio"]:checked');
-        if (answers.length < 3) {
-            alert("Please answer all questions!");
-            return;
-        }
+    const audioPlayerContainer = document.getElementById('audioPlayerContainer');
+    audioPlayerContainer.innerHTML = `
+        <audio controls>
+            <source src="${audioSource}" type="audio/mp3">
+            Your browser does not support the audio element.
+        </audio>
+    `;
+}
 
-        answers.forEach(answer => {
-            score[answer.value]++;
-        });
-
-        // Determine result
-        let maxScore = Math.max(score.A, score.B, score.C, score.D);
-        let result;
-        let audioSource;
-
-        if (maxScore === score.A || maxScore === score.B || maxScore === score.C || maxScore === score.D) {
-            result = "✨✨ДА✨✨";
-            audioSource = "https://alexk37.github.io/telegram-quiz/Невозможно%20желать.mp3";  // Replace with actual audio file
-        }
-
-        // Display the result and audio player, hide the last question
-        document.getElementById('question3').style.display = 'none'; // Hide the third question block
-        document.getElementById('result').innerText = result;
-        document.getElementById('result-container').style.display = 'block'; // Show the result block
-
-        const audioPlayerContainer = document.getElementById('audioPlayerContainer');
-        audioPlayerContainer.innerHTML = `
-            <audio controls>
-                <source src="${audioSource}" type="audio/mp3">
-                Your browser does not support the audio element.
-            </audio>
-        `;
-    }
 </script>
 
 </body>
